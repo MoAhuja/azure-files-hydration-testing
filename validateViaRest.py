@@ -15,5 +15,4 @@ md5ofContent =  configParser.get('AzureFiles', 'md5')
 i = 0
 af = AzureFiles(connectionString)
 for i in range(numberOfShares):
-    af.upload_local_file('test.html', 'pvcclaim' + str(i+1), 'test.html')
     af.validate_remote_file('pvcclaim' + str(i+1), 'test.html', 'test.html', md5ofContent)

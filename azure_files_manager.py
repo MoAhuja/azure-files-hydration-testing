@@ -10,6 +10,7 @@ from azure.storage.fileshare import (
     ShareDirectoryClient,
     ShareFileClient
 )
+import hashlib
 
 class AzureFiles():
 
@@ -39,3 +40,23 @@ class AzureFiles():
         except ResourceNotFoundError as ex:
             print("ResourceNotFoundError:", ex.message)
 
+    def validate_remote_file(self, share_name, remote_file_path, local_file_name, checksum):
+        try:
+           
+            # Create a ShareFileClient from a connection string
+            fileClient = self.serviceClient.get_share_client(share_name).get_file_client(remote_file_path)
+
+       
+           
+            # Download the file from Azure into a stream
+            stream = fileClient.download_file()
+            # Write the stream to the local file
+            md5Result = hashlib.md5(stream.readall()).hexdigest()
+
+            if md5Result == checksum:
+                print("Validating file '{0}/{1} - Match".format(share_name, remote_file_path))
+            else:
+                print("No match")
+
+        except ResourceNotFoundError as ex:
+            print("ResourceNotFoundError:", ex.message)
